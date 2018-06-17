@@ -13,7 +13,7 @@ func TestDownloadArtifact(t *testing.T) {
 	file := "testdata/artifact"
 	defer os.Remove(file)
 
-	DownloadArtifact(base64Url(message), file)
+	DownloadArtifact(base64Url(message), file, "", "")
 
 	contents, _ := ioutil.ReadFile(file)
 	if got := string(contents); got != message {

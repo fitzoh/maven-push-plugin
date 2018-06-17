@@ -21,7 +21,7 @@ type MavenConfig struct {
 	RepoPassword string `yaml:"repo-password"`
 }
 
-func DownloadArtifact(url string, destination string) {
+func DownloadArtifact(url string, destination string, username string, password string) {
 	output, err := os.Create(destination)
 	if err != nil {
 		panic(err)
@@ -29,13 +29,20 @@ func DownloadArtifact(url string, destination string) {
 	defer output.Close()
 
 	fmt.Printf("downloading artifact from %s\n", url)
-	response, err := http.Get(url)
+	request, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		fmt.Printf("failed to create request, %+v", err)
+	}
+	if len(username) != 0 {
+		request.SetBasicAuth(username, password)
+	}
+	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		fmt.Printf("failed to download artifact from maven repository, %+v", err)
 		os.Exit(1)
 	}
 	if response.StatusCode != 200 {
-		fmt.Printf("received status code %d from maven repository\n", response.StatusCode)
+		fmt.Printf("received status code %d from maven repository: %s\n", response.StatusCode, response.Status)
 		os.Exit(1)
 	}
 	defer response.Body.Close()
