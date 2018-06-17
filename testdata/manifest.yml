@@ -1,0 +1,8 @@
+---
+applications:
+- name: some-application
+  maven:
+    repo-url: https://repo.maven.apache.org/maven2/
+    group-id: com.group.my
+    artifact-id: my-artifact
+    version: 1.0.0
