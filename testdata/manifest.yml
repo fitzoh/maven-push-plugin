@@ -1,6 +1,7 @@
 ---
 applications:
-- name: some-application
+- name: my-application
+  memory: 1G
   maven:
     repo-url: https://repo.maven.apache.org/maven2/
     group-id: com.group.my
