@@ -78,7 +78,7 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	args = append(args, "-p", artifactFile)
 	args[0] = "push"
 
-	fmt.Println("running: cf ", strings.Join(args, " "))
+	fmt.Println("running: cf", strings.Join(args, " "))
 	cliConnection.CliCommand(args...)
 }
 
