@@ -21,7 +21,6 @@ type Application struct {
 	MavenConfig MavenConfig `yaml:"maven"`
 }
 
-
 func ParseManifest(f string) (Manifest, error) {
 	raw, err := ioutil.ReadFile(f)
 	if err != nil {
@@ -67,7 +66,11 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	defer os.Remove(artifactDir)
 	artifactFile := artifactDir + "/artifact"
 
-	DownloadArtifact(config.ArtifactUrl(), artifactFile, config.RepoUsername, config.RepoPassword)
+	err = DownloadArtifact(config.ArtifactUrl(), artifactFile, config.RepoUsername, config.RepoPassword)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	args = append(args, "-p", artifactFile)
 	args[0] = "push"

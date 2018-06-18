@@ -27,37 +27,35 @@ func (config *MavenConfig) SetDefaults() {
 	}
 }
 
-
-func DownloadArtifact(url string, destination string, username string, password string) {
+func DownloadArtifact(url string, destination string, username string, password string) error {
 	output, err := os.Create(destination)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("failed to create temp dir, %+v", err)
 	}
 	defer output.Close()
 
 	fmt.Printf("downloading artifact from %s\n", url)
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		fmt.Printf("failed to create request, %+v", err)
+		return fmt.Errorf("failed to create request, %+v", err)
 	}
 	if len(username) != 0 {
 		request.SetBasicAuth(username, password)
 	}
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
-		fmt.Printf("failed to download artifact from maven repository, %+v", err)
-		os.Exit(1)
+		return fmt.Errorf("failed to download artifact from maven repository, %+v", err)
 	}
 	if response.StatusCode != 200 {
-		fmt.Printf("received status code %d from maven repository: %s\n", response.StatusCode, response.Status)
-		os.Exit(1)
+		return fmt.Errorf("received status code %d from maven repository: %s\n", response.StatusCode, response.Status)
 	}
 	defer response.Body.Close()
 
 	_, err = io.Copy(output, response.Body)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("failed to save artifact to temp file, %+v", err)
 	}
+	return nil
 }
 
 func (config MavenConfig) ArtifactName() string {
