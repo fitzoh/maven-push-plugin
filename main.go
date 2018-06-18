@@ -7,6 +7,7 @@ import (
 	"github.com/go-yaml/yaml"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 type MavenPushPlugin struct {
@@ -42,9 +43,10 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	if len(args) == 0 || args[0] != "maven-push" {
 		os.Exit(0)
 	}
-	flags := flag.NewFlagSet("maven-push", flag.ExitOnError)
+	flags := flag.NewFlagSet("maven-push", flag.ContinueOnError)
 	manifestPath := flags.String("f", "manifest.yml", "Path to manifest")
-	flags.Parse(args[1:])
+
+	parseArgsNoStdErr(flags, args)
 
 	fmt.Printf("using manifest file %s\n", *manifestPath)
 	manifest, err := ParseManifest(*manifestPath)
@@ -78,7 +80,14 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 
 	fmt.Println("running: cf ", strings.Join(args, " "))
 	cliConnection.CliCommand(args...)
+}
 
+//don't show usage for an unknown flag
+func parseArgsNoStdErr(flags *flag.FlagSet, args []string) {
+	stderr := os.Stderr
+	_, os.Stderr, _ = os.Pipe()
+	flags.Parse(args[1:])
+	os.Stderr = stderr
 }
 
 func (c *MavenPushPlugin) GetMetadata() plugin.PluginMetadata {
