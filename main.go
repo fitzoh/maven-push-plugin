@@ -3,10 +3,10 @@ package main
 import (
 	"code.cloudfoundry.org/cli/plugin"
 	"flag"
+	"fmt"
 	"github.com/go-yaml/yaml"
 	"io/ioutil"
 	"os"
-	"fmt"
 )
 
 type MavenPushPlugin struct {

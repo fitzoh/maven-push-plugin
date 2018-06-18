@@ -1,13 +1,13 @@
 package main
 
 import (
-	"os"
-	"net/http"
-	"io"
 	"fmt"
-	"net/url"
-	"strings"
+	"io"
 	"log"
+	"net/http"
+	"net/url"
+	"os"
+	"strings"
 )
 
 type MavenConfig struct {
@@ -79,7 +79,7 @@ func (config MavenConfig) ArtifactUrl() string {
 }
 
 func addPath(base string, fragment string) string {
-	if ! strings.HasSuffix(base, "/") {
+	if !strings.HasSuffix(base, "/") {
 		base += "/"
 	}
 	return base + url.PathEscape(fragment)

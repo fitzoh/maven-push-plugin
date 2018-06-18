@@ -1,8 +1,8 @@
 package main
 
 import (
-	"testing"
 	"strings"
+	"testing"
 )
 
 var (
@@ -40,7 +40,7 @@ var (
 
 func TestParseSimpleManifest(t *testing.T) {
 	manifest, err := ParseManifest("testdata/simple-manifest.yml")
-	if err != nil{
+	if err != nil {
 		t.Fatal("failed to parse manifest", err)
 	}
 	config := manifest.Applications[0].MavenConfig
@@ -51,8 +51,7 @@ func TestParseSimpleManifest(t *testing.T) {
 
 func TestParseBadMultiAppManifest(t *testing.T) {
 	_, err := ParseManifest("testdata/bad-multi-app-manifest.yml")
-	if err == nil || !strings.HasPrefix(err.Error(), "single application manifest required"){
+	if err == nil || !strings.HasPrefix(err.Error(), "single application manifest required") {
 		t.Errorf("expected error about multiple applications in manifest")
 	}
 }
-

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"testing"
-	"os"
-	"io/ioutil"
 	"encoding/base64"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"testing"
 )
 
 func TestDownloadArtifact(t *testing.T) {
