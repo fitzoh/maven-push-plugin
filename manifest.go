@@ -16,6 +16,10 @@ type Application struct {
 }
 
 func ParseManifest(f string) (Manifest, error) {
+	err := ValidateManifest(f)
+	if err != nil {
+		return Manifest{}, err
+	}
 	raw, err := ioutil.ReadFile(f)
 	if err != nil {
 		return Manifest{}, fmt.Errorf("failed to read manifest file %s, %+v", f, err)
