@@ -49,6 +49,7 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	fmt.Printf("using manifest file %s\n", *manifestPath)
 	manifest, err := ParseManifest(*manifestPath)
 	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
