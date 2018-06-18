@@ -44,9 +44,9 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		os.Exit(0)
 	}
 	flags := flag.NewFlagSet("maven-push", flag.ContinueOnError)
+	flags.SetOutput(ioutil.Discard)
 	manifestPath := flags.String("f", "manifest.yml", "Path to manifest")
-
-	parseArgsNoStdErr(flags, args)
+	flags.Parse(args[1:])
 
 	fmt.Printf("using manifest file %s\n", *manifestPath)
 	manifest, err := ParseManifest(*manifestPath)
@@ -80,14 +80,6 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 
 	fmt.Println("running: cf", strings.Join(args, " "))
 	cliConnection.CliCommand(args...)
-}
-
-//don't show usage for an unknown flag
-func parseArgsNoStdErr(flags *flag.FlagSet, args []string) {
-	stderr := os.Stderr
-	_, os.Stderr, _ = os.Pipe()
-	flags.Parse(args[1:])
-	os.Stderr = stderr
 }
 
 func (c *MavenPushPlugin) GetMetadata() plugin.PluginMetadata {
