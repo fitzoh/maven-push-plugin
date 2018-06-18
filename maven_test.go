@@ -42,8 +42,8 @@ func TestBuildArtifactName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := BuildArtifactName(tt.args.config); got != tt.want {
-				t.Errorf("BuildArtifactName() = %v, want %v", got, tt.want)
+			if got := tt.args.config.ArtifactName(); got != tt.want {
+				t.Errorf("ArtifactName() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -62,8 +62,8 @@ func TestBuildArtifactUrl(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := BuildArtifactUrl(tt.args.config); got != tt.want {
-				t.Errorf("BuildArtifactUrl() = %v, want %v", got, tt.want)
+			if got := tt.args.config.ArtifactUrl(); got != tt.want {
+				t.Errorf("ArtifactUrl() = %v, want %v", got, tt.want)
 			}
 		})
 	}

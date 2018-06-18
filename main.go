@@ -71,7 +71,7 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	defer os.Remove(artifactDir)
 	artifactFile := artifactDir + "/artifact"
 
-	DownloadArtifact(BuildArtifactUrl(config), artifactFile, config.RepoUsername, config.RepoPassword)
+	DownloadArtifact(config.ArtifactUrl(), artifactFile, config.RepoUsername, config.RepoPassword)
 
 	args = append(args, "-p", artifactFile)
 	args[0] = "push"

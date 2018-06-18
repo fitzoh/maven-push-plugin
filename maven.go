@@ -53,14 +53,14 @@ func DownloadArtifact(url string, destination string, username string, password 
 	}
 }
 
-func BuildArtifactName(config MavenConfig) string {
+func (config MavenConfig) ArtifactName() string {
 	if len(config.Classifier) == 0 {
 		return fmt.Sprintf("%s-%s.%s", config.ArtifactId, config.Version, config.Extension)
 	}
 	return fmt.Sprintf("%s-%s-%s.%s", config.ArtifactId, config.Version, config.Classifier, config.Extension)
 }
 
-func BuildArtifactUrl(config MavenConfig) string {
+func (config MavenConfig) ArtifactUrl() string {
 	artifactUrl := config.RepoUrl
 	validateUrl(config.RepoUrl)
 	for _, fragment := range strings.Split(config.GroupId, ".") {
@@ -68,7 +68,7 @@ func BuildArtifactUrl(config MavenConfig) string {
 	}
 	artifactUrl = addPath(artifactUrl, config.ArtifactId)
 	artifactUrl = addPath(artifactUrl, config.Version)
-	artifactUrl = addPath(artifactUrl, BuildArtifactName(config))
+	artifactUrl = addPath(artifactUrl, config.ArtifactName())
 	validateUrl(artifactUrl)
 	return artifactUrl
 }
