@@ -95,8 +95,8 @@ func (c *MavenPushPlugin) GetMetadata() plugin.PluginMetadata {
 		Name: "maven-push",
 		Version: plugin.VersionType{
 			Major: 0,
-			Minor: 0,
-			Build: 1,
+			Minor: 1,
+			Build: 0,
 		},
 		MinCliVersion: plugin.VersionType{
 			Major: 0,
