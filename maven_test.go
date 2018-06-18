@@ -38,7 +38,7 @@ func TestArtifactName(t *testing.T) {
 		{"simple", args{simpleConfig}, "my-artifact-1.0.0.jar"},
 		{"classifier", args{classifierConfig}, "my-artifact-1.0.0-javadoc.jar"},
 		{"zip", args{zipConfig}, "my-artifact-1.0.0.zip"},
-		{"complex", args{complexConfig}, "my-artifact-1.0.0-complex.zip"},
+		{"allMavenKeys", args{allMavenKeysConfig}, "my-artifact-1.0.0-source.zip"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -15,8 +15,8 @@ type MavenConfig struct {
 	GroupId      string `yaml:"group-id"`
 	ArtifactId   string `yaml:"artifact-id"`
 	Version      string `yaml:"version"`
-	Extension    string `yaml:"extension"`
 	Classifier   string `yaml:"classifier"`
+	Extension    string `yaml:"extension"`
 	RepoUsername string `yaml:"repo-username"`
 	RepoPassword string `yaml:"repo-password"`
 }

@@ -4,39 +4,12 @@ import (
 	"code.cloudfoundry.org/cli/plugin"
 	"flag"
 	"fmt"
-	"github.com/go-yaml/yaml"
 	"io/ioutil"
 	"os"
 	"strings"
 )
 
 type MavenPushPlugin struct {
-}
-
-type Manifest struct {
-	Applications []Application `yaml:"applications"`
-}
-
-type Application struct {
-	Name        string      `yaml:"name"`
-	MavenConfig MavenConfig `yaml:"maven"`
-}
-
-func ParseManifest(f string) (Manifest, error) {
-	raw, err := ioutil.ReadFile(f)
-	if err != nil {
-		return Manifest{}, fmt.Errorf("failed to read manifest file %s, %+v", f, err)
-	}
-	var manifest Manifest
-	err = yaml.Unmarshal(raw, &manifest)
-	if err != nil {
-		return Manifest{}, fmt.Errorf("failed to umarshall manifest file %s, %+v", f, err)
-	}
-	if numApplications := len(manifest.Applications); numApplications != 1 {
-		return Manifest{}, fmt.Errorf("single application manifest required, %d found", numApplications)
-	}
-	manifest.Applications[0].MavenConfig.SetDefaults()
-	return manifest, nil
 }
 
 func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string) {
@@ -49,6 +22,11 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	flags.Parse(args[1:])
 
 	fmt.Printf("using manifest file %s\n", *manifestPath)
+	err := ValidateManifest(*manifestPath)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	manifest, err := ParseManifest(*manifestPath)
 	if err != nil {
 		fmt.Println(err)

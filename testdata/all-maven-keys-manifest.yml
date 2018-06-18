@@ -1,0 +1,13 @@
+---
+applications:
+- name: my-application
+  memory: 1G
+  maven:
+    repo-url: https://repo.maven.apache.org/maven2/
+    group-id: com.group.my
+    artifact-id: my-artifact
+    version: 1.0.0
+    classifier: source
+    extension: zip
+    repo-username: user
+    repo-password: password
