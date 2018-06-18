@@ -2,6 +2,7 @@ package main
 
 import (
 	"testing"
+	"strings"
 )
 
 var (
@@ -47,3 +48,11 @@ func TestParseSimpleManifest(t *testing.T) {
 		t.Errorf("\nmanifest config doesn't match\nexpected %+v\ngot %+v", simpleConfig, config)
 	}
 }
+
+func TestParseBadMultiAppManifest(t *testing.T) {
+	_, err := ParseManifest("testdata/bad-multi-app-manifest.yml")
+	if err == nil || !strings.HasPrefix(err.Error(), "single application manifest required"){
+		t.Errorf("expected error about multiple applications in manifest")
+	}
+}
+
