@@ -38,7 +38,10 @@ var (
 )
 
 func TestParseSimpleManifest(t *testing.T) {
-	manifest := ParseManifest("testdata/manifest.yml")
+	manifest, err := ParseManifest("testdata/simple-manifest.yml")
+	if err != nil{
+		t.Fatal("failed to parse manifest", err)
+	}
 	config := manifest.Applications[0].MavenConfig
 	if config != simpleConfig {
 		t.Errorf("\nmanifest config doesn't match\nexpected %+v\ngot %+v", simpleConfig, config)

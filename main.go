@@ -21,29 +21,22 @@ type Application struct {
 	MavenConfig MavenConfig `yaml:"maven"`
 }
 
-func ParseManifest(f string) Manifest {
+
+func ParseManifest(f string) (Manifest, error) {
 	raw, err := ioutil.ReadFile(f)
 	if err != nil {
-		fmt.Printf("failed to read manifest file %s, %+v\n", f, err)
-		os.Exit(1)
+		return Manifest{}, fmt.Errorf("failed to read manifest file %s, %+v", f, err)
 	}
 	var manifest Manifest
 	err = yaml.Unmarshal(raw, &manifest)
 	if err != nil {
-		fmt.Printf("failed to umarshall manifest file %s, %+v\n", f, err)
-		os.Exit(1)
+		return Manifest{}, fmt.Errorf("failed to umarshall manifest file %s, %+v", f, err)
 	}
-	setManifestDefaults(manifest)
-	return manifest
-}
-
-func setManifestDefaults(manifest Manifest) {
-	for i := 0; i < len(manifest.Applications); i++ {
-		config := &manifest.Applications[i].MavenConfig
-		if len(config.Extension) == 0 {
-			config.Extension = "jar"
-		}
+	if numApplications := len(manifest.Applications); numApplications != 1 {
+		return Manifest{}, fmt.Errorf("single application manifest required, %d found", numApplications)
 	}
+	manifest.Applications[0].MavenConfig.SetDefaults()
+	return manifest, nil
 }
 
 func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string) {
@@ -55,7 +48,10 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	flags.Parse(args[1:])
 
 	fmt.Printf("using manifest file %s\n", *manifestPath)
-	manifest := ParseManifest(*manifestPath)
+	manifest, err := ParseManifest(*manifestPath)
+	if err != nil {
+		os.Exit(1)
+	}
 
 	if numApplications := len(manifest.Applications); numApplications != 1 {
 		fmt.Printf("single application manifest required, %d found", numApplications)
