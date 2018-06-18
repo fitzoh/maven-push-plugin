@@ -26,7 +26,7 @@ func base64Url(message string) string {
 	return fmt.Sprintf("http://httpbin.org/base64/%s", base64message)
 }
 
-func TestBuildArtifactName(t *testing.T) {
+func TestArtifactName(t *testing.T) {
 	type args struct {
 		config MavenConfig
 	}
@@ -49,7 +49,7 @@ func TestBuildArtifactName(t *testing.T) {
 	}
 }
 
-func TestBuildArtifactUrl(t *testing.T) {
+func TestArtifactUrl(t *testing.T) {
 	type args struct {
 		config MavenConfig
 	}
