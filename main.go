@@ -73,7 +73,7 @@ func (c *MavenPushPlugin) GetMetadata() plugin.PluginMetadata {
 				// UsageDetails is optional
 				// It is used to show help of usage of each command
 				UsageDetails: plugin.Usage{
-					Usage: "cf maven-push [-f MANIFEST_PATH]",
+					Usage: "cf maven-push APP_NAME [-f MANIFEST_PATH] <cf push flags>\ncf maven-push [-f MANIFEST_PATH] <cf push flags>",
 				},
 			},
 		},
