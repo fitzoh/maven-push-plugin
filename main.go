@@ -2,7 +2,6 @@ package main
 
 import (
 	"code.cloudfoundry.org/cli/plugin"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -16,10 +15,6 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	if len(args) == 0 || args[0] != "maven-push" {
 		os.Exit(0)
 	}
-	flags := flag.NewFlagSet("maven-push", flag.ContinueOnError)
-	flags.SetOutput(ioutil.Discard)
-	manifestPath := flags.String("f", "manifest.yml", "Path to manifest")
-	flags.Parse(args[1:])
 
 	parameters, err := ParseArgs(args)
 	if err != nil {
@@ -34,10 +29,6 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		os.Exit(1)
 	}
 
-	if numApplications := len(manifest.Applications); numApplications != 1 {
-		fmt.Printf("single application manifest required, %d found", numApplications)
-		os.Exit(1)
-	}
 	config := manifest.Applications[0].MavenConfig
 
 	artifactDir, err := ioutil.TempDir("", "cf-maven-push")
