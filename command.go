@@ -1,15 +1,26 @@
 package main
 
+import (
+	"code.cloudfoundry.org/cli/command/v2"
+)
+
 type MavenPushCommand struct {
-	PathToManifest string `short:"f" description:"Path to manifest" default:"manifest.yml" `
-	RepoUrl        string `long:"maven-repo-url"`
-	GroupId        string `long:"maven-group-id"`
-	ArtifactId     string `long:"maven-artifact-id"`
-	Version        string `long:"maven-version"`
-	Classifier     string `long:"maven-classifier"`
-	Extension      string `long:"maven-extension"`
-	RepoUsername   string `long:"maven-repo-username"`
-	RepoPassword   string `long:"maven-repo-password"`
+	RepoUrl      string `long:"maven-repo-url"`
+	GroupId      string `long:"maven-group-id"`
+	ArtifactId   string `long:"maven-artifact-id"`
+	Version      string `long:"maven-version"`
+	Classifier   string `long:"maven-classifier"`
+	Extension    string `long:"maven-extension"`
+	RepoUsername string `long:"maven-repo-username"`
+	RepoPassword string `long:"maven-repo-password"`
+	Push         v2.V2PushCommand
+}
+
+func (command MavenPushCommand) ManifestPath() string {
+	if command.Push.PathToManifest == "" {
+		return "manifest.yml"
+	}
+	return string(command.Push.PathToManifest)
 }
 
 func (command MavenPushCommand) Merge(config MavenConfig) MavenConfig {

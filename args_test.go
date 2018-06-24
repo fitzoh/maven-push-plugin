@@ -29,7 +29,7 @@ func TestParseArgs(t *testing.T) {
 				t.Errorf("ParseArgs() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got.PathToManifest, tt.want) {
+			if !reflect.DeepEqual(got.ManifestPath(), tt.want) {
 				t.Errorf("ParseArgs() = %v, want %v", got, tt.want)
 			}
 		})

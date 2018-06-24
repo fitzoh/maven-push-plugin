@@ -22,8 +22,9 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		os.Exit(1)
 	}
 
-	fmt.Printf("using manifest file %s\n", command.PathToManifest)
-	config, err := ExtractMavenConfigFromManifest(command.PathToManifest)
+	fmt.Printf("using manifest file %s\n", command.ManifestPath())
+	config, err := ExtractMavenConfigFromManifest(command.ManifestPath())
+	config = command.Merge(config)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -45,9 +46,14 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 
 	args = append(args, "-p", artifactFile)
 	args[0] = "push"
+	args = RemoveMavenArgs(args)
 
 	fmt.Println("running: cf", strings.Join(args, " "))
-	cliConnection.CliCommand(args...)
+	_, err = cliConnection.CliCommand(args...)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 func (c *MavenPushPlugin) GetMetadata() plugin.PluginMetadata {
