@@ -21,12 +21,6 @@ type MavenConfig struct {
 	RepoPassword string `yaml:"repo-password"`
 }
 
-func (config *MavenConfig) SetDefaults() {
-	if len(config.Extension) == 0 {
-		config.Extension = "jar"
-	}
-}
-
 func DownloadArtifact(url string, destination string, username string, password string) error {
 	output, err := os.Create(destination)
 	if err != nil {

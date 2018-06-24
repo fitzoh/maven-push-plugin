@@ -15,23 +15,27 @@ type Application struct {
 	MavenConfig MavenConfig `yaml:"maven"`
 }
 
-func ParseManifest(f string) (Manifest, error) {
+func ExtractMavenConfigFromManifest(f string) (MavenConfig, error) {
+	var config MavenConfig
 	err := ValidateManifest(f)
 	if err != nil {
-		return Manifest{}, err
+		return config, err
 	}
 	raw, err := ioutil.ReadFile(f)
 	if err != nil {
-		return Manifest{}, fmt.Errorf("failed to read manifest file %s, %+v", f, err)
+		return config, fmt.Errorf("failed to read manifest file %s, %+v", f, err)
 	}
 	var manifest Manifest
 	err = yaml.Unmarshal(raw, &manifest)
 	if err != nil {
-		return Manifest{}, fmt.Errorf("failed to umarshall manifest file %s, %+v", f, err)
+		return config, fmt.Errorf("failed to umarshall manifest file %s, %+v", f, err)
 	}
 	if numApplications := len(manifest.Applications); numApplications != 1 {
-		return Manifest{}, fmt.Errorf("single application manifest required, %d found", numApplications)
+		return config, fmt.Errorf("single application manifest required, %d found", numApplications)
 	}
-	manifest.Applications[0].MavenConfig.SetDefaults()
-	return manifest, nil
+	config = manifest.Applications[0].MavenConfig
+	if config.Extension == "" {
+		config.Extension = "jar"
+	}
+	return config, nil
 }
