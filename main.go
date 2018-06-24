@@ -70,7 +70,7 @@ func (c *MavenPushPlugin) GetMetadata() plugin.PluginMetadata {
 				HelpText: "Download and push an application based on maven coordinates defined in the manifest",
 
 				UsageDetails: plugin.Usage{
-					Usage: "cf maven-push APP_NAME [-f MANIFEST_PATH] [--maven-repo-url REPO_URL] [--maven-group-id GROUP_ID]\n   [--maven-artifact-id ARTIFACT_ID] [--maven-version VERSION] [--maven-classifier CLASSIFIER]\n   [--maven-extension EXTENSION] [--maven-repo-username REPO_USERNAME] [--maven-repo-password REPO_PASSWORD] <cf push flags>\n\n   cf maven-push [-f MANIFEST_PATH] [--maven-repo-url REPO_URL] [--maven-group-id GROUP_ID]\n   [--maven-artifact-id ARTIFACT_ID] [--maven-version VERSION] [--maven-classifier CLASSIFIER]\n   [--maven-extension EXTENSION] [--maven-repo-username REPO_USERNAME] [--maven-repo-password REPO_PASSWORD] <cf push flags>",
+					Usage: "cf maven-push [-f MANIFEST_PATH] [--maven-repo-url REPO_URL] [--maven-group-id GROUP_ID]\n   [--maven-artifact-id ARTIFACT_ID] [--maven-version VERSION] [--maven-classifier CLASSIFIER]\n   [--maven-extension EXTENSION] [--maven-repo-username REPO_USERNAME] [--maven-repo-password REPO_PASSWORD] <cf push flags>\n\n   cf maven-push APP_NAME [-f MANIFEST_PATH] [--maven-repo-url REPO_URL] [--maven-group-id GROUP_ID]\n   [--maven-artifact-id ARTIFACT_ID] [--maven-version VERSION] [--maven-classifier CLASSIFIER]\n   [--maven-extension EXTENSION] [--maven-repo-username REPO_USERNAME] [--maven-repo-password REPO_PASSWORD] <cf push flags>",
 					Options: map[string]string{
 						"f":                    "Path to manifest (default manifest.yml)",
 						"-maven-repo-url":      "Maven repository to pull the artifact from (e.g. https://repo.maven.apache.org/maven2/)",

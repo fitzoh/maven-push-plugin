@@ -11,8 +11,21 @@ Does not yet support [variable substitution](https://docs.cloudfoundry.org/devgu
 
 ### usage
 
+short version:
 `$ cf maven-push -f my-manifest.yml <any other args to pass to 'cf push'>`
 
+long version:
+```
+cf maven-push [-f MANIFEST_PATH] [--maven-repo-url REPO_URL] [--maven-group-id GROUP_ID]
+[--maven-artifact-id ARTIFACT_ID] [--maven-version VERSION] [--maven-classifier CLASSIFIER]
+[--maven-extension EXTENSION] [--maven-repo-username REPO_USERNAME] [--maven-repo-password REPO_PASSWORD] <cf push flags>
+```
+or with an explicit app name
+```
+cf maven-push APP_NAME [-f MANIFEST_PATH] [--maven-repo-url REPO_URL] [--maven-group-id GROUP_ID]
+[--maven-artifact-id ARTIFACT_ID] [--maven-version VERSION] [--maven-classifier CLASSIFIER]
+[--maven-extension EXTENSION] [--maven-repo-username REPO_USERNAME] [--maven-repo-password REPO_PASSWORD] <cf push flags>
+```
 ### example manifest
 
 ```
