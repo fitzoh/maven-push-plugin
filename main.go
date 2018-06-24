@@ -64,11 +64,6 @@ func (c *MavenPushPlugin) GetMetadata() plugin.PluginMetadata {
 			Minor: 1,
 			Build: 0,
 		},
-		MinCliVersion: plugin.VersionType{
-			Major: 0,
-			Minor: 0,
-			Build: 0,
-		},
 		Commands: []plugin.Command{
 			{
 				Name:     "maven-push",
