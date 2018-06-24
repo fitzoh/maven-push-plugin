@@ -7,7 +7,7 @@ import (
 
 func ParseArgs(args []string) (MavenPushCommand, error) {
 	var command MavenPushCommand
-	parser := flags.NewParser(&command, flags.HelpFlag)
+	parser := flags.NewParser(&command, flags.None)
 	_, err := parser.ParseArgs(args)
 	if err != nil {
 		return command, err
