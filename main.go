@@ -16,14 +16,14 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		os.Exit(0)
 	}
 
-	parameters, err := ParseArgs(args)
+	manifestPath, err := ParseManifestPath(args)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	fmt.Printf("using manifest file %s\n", parameters.ManifestPath)
-	manifest, err := ParseManifest(parameters.ManifestPath)
+	fmt.Printf("using manifest file %s\n", manifestPath)
+	manifest, err := ParseManifest(manifestPath)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

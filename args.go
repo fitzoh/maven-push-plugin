@@ -1,29 +1,19 @@
 package main
 
 import (
-	"flag"
-	"io/ioutil"
 	"strings"
+	"github.com/jessevdk/go-flags"
+	"code.cloudfoundry.org/cli/command/v2"
 )
 
-type MavenPushParameters struct {
-	ManifestPath string
-}
-
-func ParseArgs(args []string) (MavenPushParameters, error) {
-	params := MavenPushParameters{
-		ManifestPath: "manifest.yml",
+func ParseManifestPath(args []string) (string, error) {
+	pushCommand := v2.V2PushCommand{PathToManifest: "manifest.yml"}
+	parser := flags.NewParser(&pushCommand, flags.IgnoreUnknown)
+	_, err := parser.ParseArgs(args)
+	if err != nil {
+		return "", err
 	}
-
-	flags := flag.NewFlagSet("maven-push", flag.ContinueOnError)
-	flags.SetOutput(ioutil.Discard)
-	manifestPath := flags.String("f", "manifest.yml", "Path to manifest")
-
-	flags.Parse(prepareArgs(args))
-	if len(*manifestPath) != 0 {
-		params.ManifestPath = *manifestPath
-	}
-	return params, nil
+	return string(pushCommand.PathToManifest), nil
 }
 
 func prepareArgs(args []string) []string {
