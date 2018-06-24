@@ -1,9 +1,9 @@
 package main
 
 import (
+	"os"
 	"reflect"
 	"testing"
-	"os"
 )
 
 func TestParseArgs(t *testing.T) {
@@ -39,4 +39,27 @@ func TestParseArgs(t *testing.T) {
 	}
 	//back to root dir so we don't mess up other tests
 	os.Chdir("..")
+}
+
+func TestRemoveMavenArgs(t *testing.T) {
+	tests := []struct {
+		name string
+		args []string
+		want []string
+	}{
+		{name: "empty", args: []string{}, want: []string{}},
+
+		{name: "space", args: []string{"--maven-thing", "thing"}, want: []string{}},
+		{name: "equals", args: []string{"--maven-thing=thing"}, want: []string{}},
+
+		{name: "space with neighbors", args: []string{"keep1", "--maven-thing", "thing", "keep2"}, want: []string{"keep1", "keep2"}},
+		{name: "equals with neighbors", args: []string{"keep1", "--maven-thing=thing", "keep2"}, want: []string{"keep1", "keep2"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RemoveMavenArgs(tt.args); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("RemoveMavenArgs() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
