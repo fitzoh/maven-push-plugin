@@ -3,9 +3,12 @@ package main
 import (
 	"reflect"
 	"testing"
+	"os"
 )
 
 func TestParseArgs(t *testing.T) {
+	//move to testdata dir so that manifest validation works
+	os.Chdir("testdata")
 	tests := []struct {
 		name    string
 		args    []string
@@ -14,13 +17,13 @@ func TestParseArgs(t *testing.T) {
 	}{
 		{name: "no args", args: []string{"maven-push"}, want: "manifest.yml", wantErr: false},
 		{name: "proxy args only", args: []string{"maven-push", "-i", "2"}, want: "manifest.yml", wantErr: false},
-		{name: "manifest and proxy args", args: []string{"maven-push", "--no-route", "-f", "testdata/simple-manifest.yml", "-i", "2"}, want: "testdata/simple-manifest.yml", wantErr: false},
-		{name: "manifest and proxy args and boolean", args: []string{"maven-push", "--no-route", "-f", "testdata/simple-manifest.yml", "-i", "2"}, want: "testdata/simple-manifest.yml", wantErr: false},
+		{name: "manifest and proxy args", args: []string{"maven-push", "--no-route", "-f", "simple-manifest.yml", "-i", "2"}, want: "simple-manifest.yml", wantErr: false},
+		{name: "manifest and proxy args and boolean", args: []string{"maven-push", "--no-route", "-f", "simple-manifest.yml", "-i", "2"}, want: "simple-manifest.yml", wantErr: false},
 
 		{name: "app name no args", args: []string{"maven-push", "my-app"}, want: "manifest.yml", wantErr: false},
 		{name: "app name proxy args only", args: []string{"maven-push", "my-app", "-i", "2"}, want: "manifest.yml", wantErr: false},
-		{name: "app name manifest and proxy args", args: []string{"maven-push", "my-app", "-f", "testdata/simple-manifest.yml", "-i", "2"}, want: "testdata/simple-manifest.yml", wantErr: false},
-		{name: "app name manifest and proxy args and boolean", args: []string{"maven-push", "my-app", "--no-route", "-f", "testdata/simple-manifest.yml", "-i", "2"}, want: "testdata/simple-manifest.yml", wantErr: false},
+		{name: "app name manifest and proxy args", args: []string{"maven-push", "my-app", "-f", "simple-manifest.yml", "-i", "2"}, want: "simple-manifest.yml", wantErr: false},
+		{name: "app name manifest and proxy args and boolean", args: []string{"maven-push", "my-app", "--no-route", "-f", "simple-manifest.yml", "-i", "2"}, want: "simple-manifest.yml", wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -34,4 +37,6 @@ func TestParseArgs(t *testing.T) {
 			}
 		})
 	}
+	//back to root dir so we don't mess up other tests
+	os.Chdir("..")
 }
