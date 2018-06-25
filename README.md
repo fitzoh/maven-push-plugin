@@ -60,6 +60,10 @@ applications:
 
 ### installation
 
-Download the appropriate binary from the [releases page](https://github.com/fitzoh/maven-push-plugin/releases).
+Install from the [community plugin repository](https://plugins.cloudfoundry.org/)
+
+`cf install-plugin -r CF-Community "maven-push"`
+
+or download from the [releases page](https://github.com/fitzoh/maven-push-plugin/releases)
 
 `$ cf install-plugin path/to/maven-push/binary`
