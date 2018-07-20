@@ -24,6 +24,15 @@ func RemoveMavenArgs(args []string) []string {
 	return args
 }
 
+func RemoveRemoteManifestArgs(args []string) []string {
+	for i, arg := range args {
+		if strings.HasPrefix(arg, "--remote-manifest-") {
+			return RemoveMavenArgs(removeArg(args, arg, i))
+		}
+	}
+	return args
+}
+
 func removeArg(args []string, arg string, i int) []string {
 	argsRemoved := 2
 	if strings.Contains(arg, "=") {

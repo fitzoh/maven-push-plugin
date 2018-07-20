@@ -21,6 +21,18 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	tempDir, err := ioutil.TempDir("", "cf-maven-push")
+	defer os.Remove(tempDir)
+
+	useRemoteManifest := command.RemoteManifestUrl != ""
+
+	if useRemoteManifest {
+		err = command.ConfigureRemoteManifestIfPresent(tempDir)
+		if err != nil {
+			fmt.Println("failed to download remote manifest", err)
+			os.Exit(1)
+		}
+	}
 
 	fmt.Printf("using manifest file %s\n", command.ManifestPath())
 	config, err := ExtractMavenConfigFromManifest(command.ManifestPath())
@@ -30,23 +42,25 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		os.Exit(1)
 	}
 
-	artifactDir, err := ioutil.TempDir("", "cf-maven-push")
 	if err != nil {
 		fmt.Printf("failed to create temp dir, %+v", err)
 		os.Exit(1)
 	}
-	defer os.Remove(artifactDir)
-	artifactFile := artifactDir + "/artifact"
+	artifactFile := tempDir + "/artifact"
 
-	err = DownloadArtifact(config.ArtifactUrl(), artifactFile, config.RepoUsername, config.RepoPassword)
+	err = DownloadFile(config.ArtifactUrl(), artifactFile, config.RepoUsername, config.RepoPassword)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("failed to download remote manifest", err)
 		os.Exit(1)
 	}
 
 	args = append(args, "-p", artifactFile)
+	if useRemoteManifest {
+		args = append(args, "-f", string(command.Push.PathToManifest))
+	}
 	args[0] = "push"
 	args = RemoveMavenArgs(args)
+	args = RemoveRemoteManifestArgs(args)
 
 	fmt.Println("running: cf", strings.Join(args, " "))
 	_, err = cliConnection.CliCommand(args...)
