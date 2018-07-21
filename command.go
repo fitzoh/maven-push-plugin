@@ -8,16 +8,19 @@ import (
 )
 
 type MavenPushCommand struct {
-	RepoUrl           string `long:"maven-repo-url"`
-	GroupId           string `long:"maven-group-id"`
-	ArtifactId        string `long:"maven-artifact-id"`
-	Version           string `long:"maven-version"`
-	Classifier        string `long:"maven-classifier"`
-	Extension         string `long:"maven-extension"`
-	RepoUsername      string `long:"maven-repo-username"`
-	RepoPassword      string `long:"maven-repo-password"`
-	RemoteManifestUrl string `long:"remote-manifest-url"`
-	Push              v2.V2PushCommand
+	RepoUrl                string `long:"maven-repo-url"`
+	GroupId                string `long:"maven-group-id"`
+	ArtifactId             string `long:"maven-artifact-id"`
+	Version                string `long:"maven-version"`
+	Classifier             string `long:"maven-classifier"`
+	Extension              string `long:"maven-extension"`
+	RepoUsername           string `long:"maven-repo-username"`
+	RepoPassword           string `long:"maven-repo-password"`
+	RemoteManifestUrl      string `long:"remote-manifest-url"`
+	RemoteManifestUsername string `long:"remote-manifest-username"`
+	RemoteManifestPassword string `long:"remote-manifest-password"`
+
+	Push v2.V2PushCommand
 }
 
 func (cmd *MavenPushCommand) ManifestPath() string {
@@ -60,7 +63,7 @@ func (cmd *MavenPushCommand) ConfigureRemoteManifestIfPresent(tempDir string) er
 		return fmt.Errorf("remote manifest url is not configured")
 	}
 	manifestFile := filepath.Join(tempDir, "manifest.yml")
-	err := DownloadFile(cmd.RemoteManifestUrl, manifestFile, "", "")
+	err := DownloadFile(cmd.RemoteManifestUrl, manifestFile, cmd.RemoteManifestUsername, cmd.RemoteManifestPassword)
 	if err != nil {
 		return err
 	}
