@@ -16,15 +16,17 @@ short version:
 
 long version:
 ```
-cf maven-push [-f MANIFEST_PATH] [--maven-repo-url REPO_URL] [--maven-group-id GROUP_ID]
-[--maven-artifact-id ARTIFACT_ID] [--maven-version VERSION] [--maven-classifier CLASSIFIER]
-[--maven-extension EXTENSION] [--maven-repo-username REPO_USERNAME] [--maven-repo-password REPO_PASSWORD] <cf push flags>
+cf maven-push [-f MANIFEST_PATH] [--maven-repo-url REPO_URL] [--maven-group-id GROUP_ID] [--maven-artifact-id ARTIFACT_ID]
+[--maven-version VERSION] [--maven-classifier CLASSIFIER] [--maven-extension EXTENSION] [--maven-repo-username REPO_USERNAME]
+[--maven-repo-password REPO_PASSWORD] [--remote-manifest-url MANIFEST_URL] [--remote-manifest-username MANIFEST_USERNAME]
+[--remote-manifest-password MANIFEST_PASSWORD] <cf push flags>
 ```
 or with an explicit app name
 ```
-cf maven-push APP_NAME [-f MANIFEST_PATH] [--maven-repo-url REPO_URL] [--maven-group-id GROUP_ID]
-[--maven-artifact-id ARTIFACT_ID] [--maven-version VERSION] [--maven-classifier CLASSIFIER]
-[--maven-extension EXTENSION] [--maven-repo-username REPO_USERNAME] [--maven-repo-password REPO_PASSWORD] <cf push flags>
+cf maven-push APP_NAME [-f MANIFEST_PATH] [--maven-repo-url REPO_URL] [--maven-group-id GROUP_ID] [--maven-artifact-id ARTIFACT_ID]
+[--maven-version VERSION] [--maven-classifier CLASSIFIER] [--maven-extension EXTENSION] [--maven-repo-username REPO_USERNAME]
+[--maven-repo-password REPO_PASSWORD] [--remote-manifest-url MANIFEST_URL] [--remote-manifest-username MANIFEST_USERNAME]
+[--remote-manifest-password MANIFEST_PASSWORD] <cf push flags>
 ```
 ### example manifest
 
@@ -57,6 +59,16 @@ applications:
 `repo-username` (optional, default none)
 
 `repo-password` (optional, default none)
+
+`remote-manifest-url` (optional, default none)
+
+`remote-manifest-username` (optional, default none)
+
+`remote-manifest-password` (optional, default none)
+
+### remote manifests
+If your manifest file lives on a remote server (like your artifact does),
+you can retrieve a copy by specifying the url it is hosted at (and optionally basic auth credentials).
 
 ### installation
 
