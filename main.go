@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -46,7 +47,7 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		fmt.Printf("failed to create temp dir, %+v", err)
 		os.Exit(1)
 	}
-	artifactFile := tempDir + "/artifact"
+	artifactFile := filepath.Join(tempDir, "artifact")
 
 	err = DownloadFile(config.ArtifactUrl(), artifactFile, config.RepoUsername, config.RepoPassword)
 	if err != nil {

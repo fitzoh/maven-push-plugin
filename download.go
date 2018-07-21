@@ -10,11 +10,10 @@ import (
 func DownloadFile(url string, destination string, username string, password string) error {
 	output, err := os.Create(destination)
 	if err != nil {
-		return fmt.Errorf("failed to create temp dir, %+v", err)
+		return fmt.Errorf("failed to create destination file %s, %+v", destination, err)
 	}
 	defer output.Close()
 
-	fmt.Printf("downloading file from %s\n", url)
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create request, %+v", err)
@@ -22,6 +21,7 @@ func DownloadFile(url string, destination string, username string, password stri
 	if len(username) != 0 {
 		request.SetBasicAuth(username, password)
 	}
+
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return fmt.Errorf("failed to download file from %s, %+v", url, err)
@@ -33,7 +33,7 @@ func DownloadFile(url string, destination string, username string, password stri
 
 	_, err = io.Copy(output, response.Body)
 	if err != nil {
-		return fmt.Errorf("failed to save to temp file, %+v", err)
+		return fmt.Errorf("failed to save response to file, %+v", err)
 	}
 	return nil
 }

@@ -16,24 +16,23 @@ func ParseArgs(args []string) (MavenPushCommand, error) {
 }
 
 func RemoveMavenArgs(args []string) []string {
-	for i, arg := range args {
-		if strings.HasPrefix(arg, "--maven-") {
-			return RemoveMavenArgs(removeArg(args, arg, i))
-		}
-	}
-	return args
+	return removeArgs(args, "--maven-")
 }
 
 func RemoveRemoteManifestArgs(args []string) []string {
+	return removeArgs(args, "--remote-manifest-")
+}
+
+func removeArgs(args []string, prefix string) []string {
 	for i, arg := range args {
-		if strings.HasPrefix(arg, "--remote-manifest-") {
-			return RemoveMavenArgs(removeArg(args, arg, i))
+		if strings.HasPrefix(arg, prefix) {
+			return removeArgs(removeSingleArg(args, arg, i), prefix)
 		}
 	}
 	return args
 }
 
-func removeArg(args []string, arg string, i int) []string {
+func removeSingleArg(args []string, arg string, i int) []string {
 	argsRemoved := 2
 	if strings.Contains(arg, "=") {
 		argsRemoved = 1
