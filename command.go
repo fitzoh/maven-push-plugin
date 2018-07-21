@@ -1,52 +1,72 @@
 package main
 
 import (
+	"code.cloudfoundry.org/cli/command/flag"
 	"code.cloudfoundry.org/cli/command/v2"
+	"fmt"
+	"path/filepath"
 )
 
 type MavenPushCommand struct {
-	RepoUrl      string `long:"maven-repo-url"`
-	GroupId      string `long:"maven-group-id"`
-	ArtifactId   string `long:"maven-artifact-id"`
-	Version      string `long:"maven-version"`
-	Classifier   string `long:"maven-classifier"`
-	Extension    string `long:"maven-extension"`
-	RepoUsername string `long:"maven-repo-username"`
-	RepoPassword string `long:"maven-repo-password"`
-	Push         v2.V2PushCommand
+	RepoUrl                string `long:"maven-repo-url"`
+	GroupId                string `long:"maven-group-id"`
+	ArtifactId             string `long:"maven-artifact-id"`
+	Version                string `long:"maven-version"`
+	Classifier             string `long:"maven-classifier"`
+	Extension              string `long:"maven-extension"`
+	RepoUsername           string `long:"maven-repo-username"`
+	RepoPassword           string `long:"maven-repo-password"`
+	RemoteManifestUrl      string `long:"remote-manifest-url"`
+	RemoteManifestUsername string `long:"remote-manifest-username"`
+	RemoteManifestPassword string `long:"remote-manifest-password"`
+
+	Push v2.V2PushCommand
 }
 
-func (command MavenPushCommand) ManifestPath() string {
-	if command.Push.PathToManifest == "" {
+func (cmd *MavenPushCommand) ManifestPath() string {
+	if cmd.Push.PathToManifest == "" {
 		return "manifest.yml"
 	}
-	return string(command.Push.PathToManifest)
+	return string(cmd.Push.PathToManifest)
 }
 
-func (command MavenPushCommand) Merge(config MavenConfig) MavenConfig {
-	if command.RepoUrl != "" {
-		config.RepoUrl = command.RepoUrl
+func (cmd *MavenPushCommand) Merge(config MavenConfig) MavenConfig {
+	if cmd.RepoUrl != "" {
+		config.RepoUrl = cmd.RepoUrl
 	}
-	if command.GroupId != "" {
-		config.GroupId = command.GroupId
+	if cmd.GroupId != "" {
+		config.GroupId = cmd.GroupId
 	}
-	if command.ArtifactId != "" {
-		config.ArtifactId = command.ArtifactId
+	if cmd.ArtifactId != "" {
+		config.ArtifactId = cmd.ArtifactId
 	}
-	if command.Version != "" {
-		config.Version = command.Version
+	if cmd.Version != "" {
+		config.Version = cmd.Version
 	}
-	if command.Classifier != "" {
-		config.Classifier = command.Classifier
+	if cmd.Classifier != "" {
+		config.Classifier = cmd.Classifier
 	}
-	if command.Extension != "" {
-		config.Extension = command.Extension
+	if cmd.Extension != "" {
+		config.Extension = cmd.Extension
 	}
-	if command.RepoUsername != "" {
-		config.RepoUsername = command.RepoUsername
+	if cmd.RepoUsername != "" {
+		config.RepoUsername = cmd.RepoUsername
 	}
-	if command.RepoPassword != "" {
-		config.RepoPassword = command.RepoPassword
+	if cmd.RepoPassword != "" {
+		config.RepoPassword = cmd.RepoPassword
 	}
 	return config
+}
+
+func (cmd *MavenPushCommand) ConfigureRemoteManifestIfPresent(tempDir string) error {
+	if cmd.RemoteManifestUrl == "" {
+		return fmt.Errorf("remote manifest url is not configured")
+	}
+	manifestFile := filepath.Join(tempDir, "manifest.yml")
+	err := DownloadFile(cmd.RemoteManifestUrl, manifestFile, cmd.RemoteManifestUsername, cmd.RemoteManifestPassword)
+	if err != nil {
+		return err
+	}
+	cmd.Push.PathToManifest = flag.PathWithExistenceCheck(manifestFile)
+	return nil
 }

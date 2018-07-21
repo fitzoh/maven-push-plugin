@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -21,6 +22,18 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	tempDir, err := ioutil.TempDir("", "cf-maven-push")
+	defer os.Remove(tempDir)
+
+	useRemoteManifest := command.RemoteManifestUrl != ""
+
+	if useRemoteManifest {
+		err = command.ConfigureRemoteManifestIfPresent(tempDir)
+		if err != nil {
+			fmt.Println("failed to download remote manifest", err)
+			os.Exit(1)
+		}
+	}
 
 	fmt.Printf("using manifest file %s\n", command.ManifestPath())
 	config, err := ExtractMavenConfigFromManifest(command.ManifestPath())
@@ -30,23 +43,25 @@ func (c *MavenPushPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		os.Exit(1)
 	}
 
-	artifactDir, err := ioutil.TempDir("", "cf-maven-push")
 	if err != nil {
 		fmt.Printf("failed to create temp dir, %+v", err)
 		os.Exit(1)
 	}
-	defer os.Remove(artifactDir)
-	artifactFile := artifactDir + "/artifact"
+	artifactFile := filepath.Join(tempDir, "artifact")
 
-	err = DownloadArtifact(config.ArtifactUrl(), artifactFile, config.RepoUsername, config.RepoPassword)
+	err = DownloadFile(config.ArtifactUrl(), artifactFile, config.RepoUsername, config.RepoPassword)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("failed to download remote manifest", err)
 		os.Exit(1)
 	}
 
 	args = append(args, "-p", artifactFile)
+	if useRemoteManifest {
+		args = append(args, "-f", string(command.Push.PathToManifest))
+	}
 	args[0] = "push"
 	args = RemoveMavenArgs(args)
+	args = RemoveRemoteManifestArgs(args)
 
 	fmt.Println("running: cf", strings.Join(args, " "))
 	_, err = cliConnection.CliCommand(args...)
@@ -72,15 +87,18 @@ func (c *MavenPushPlugin) GetMetadata() plugin.PluginMetadata {
 				UsageDetails: plugin.Usage{
 					Usage: "cf maven-push [-f MANIFEST_PATH] [--maven-repo-url REPO_URL] [--maven-group-id GROUP_ID]\n   [--maven-artifact-id ARTIFACT_ID] [--maven-version VERSION] [--maven-classifier CLASSIFIER]\n   [--maven-extension EXTENSION] [--maven-repo-username REPO_USERNAME] [--maven-repo-password REPO_PASSWORD] <cf push flags>\n\n   cf maven-push APP_NAME [-f MANIFEST_PATH] [--maven-repo-url REPO_URL] [--maven-group-id GROUP_ID]\n   [--maven-artifact-id ARTIFACT_ID] [--maven-version VERSION] [--maven-classifier CLASSIFIER]\n   [--maven-extension EXTENSION] [--maven-repo-username REPO_USERNAME] [--maven-repo-password REPO_PASSWORD] <cf push flags>",
 					Options: map[string]string{
-						"f":                    "Path to manifest (default manifest.yml)",
-						"-maven-repo-url":      "Maven repository to pull the artifact from (e.g. https://repo.maven.apache.org/maven2/)",
-						"-maven-group-id":      "Maven groupId",
-						"-maven-artifact-id":   "Maven artifactId",
-						"-maven-version":       "Maven version",
-						"-maven-classifier":    "Maven classifier (if any)",
-						"-maven-extension":     "Maven extension (e.g. jar, zip) (default jar)",
-						"-maven-repo-username": "Basic auth username when accessing Maven Repository (optional, default none",
-						"-maven-repo-password": "Basic auth password when accessing Maven Repository (optional, default none",
+						"f":                         "Path to manifest (default manifest.yml)",
+						"-maven-repo-url":           "Maven repository to pull the artifact from (e.g. https://repo.maven.apache.org/maven2/)",
+						"-maven-group-id":           "Maven groupId",
+						"-maven-artifact-id":        "Maven artifactId",
+						"-maven-version":            "Maven version",
+						"-maven-classifier":         "Maven classifier (optional)",
+						"-maven-extension":          "Maven extension (e.g. jar, zip) (default jar)",
+						"-maven-repo-username":      "Basic auth username when accessing Maven Repository (optional)",
+						"-maven-repo-password":      "Basic auth password when accessing Maven Repository (optional)",
+						"-remote-manifest-url":      "URL to retrieve manifest from (e.g. https://example.com/manifest.yml) (optional)",
+						"-remote-manifest-username": "Basic auth username when retrieving a remote manifest (optional)",
+						"-remote-manifest-password": "Basic auth password when retrieving a remote manifest (optional)",
 					},
 				},
 			},
